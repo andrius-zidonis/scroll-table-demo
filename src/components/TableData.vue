@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import TableDataInput from "./TableDataInput.vue";
+import TableDataSample from "./TableDataSample.vue";
 
 const columns = ref([]);
 const rows = ref([]);
@@ -26,4 +27,14 @@ function resetData() {
 
     <p v-if="rows.length > 0">Total rows: {{ rows.length }}</p>
   </div>
+
+  <div class="table-data">
+    <TableDataSample v-if="rows.length === 0" />
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.table-data {
+  text-align: left;
+}
+</style>
