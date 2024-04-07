@@ -22,7 +22,7 @@ defineProps({
     </thead>
   </table>
   <table>
-    <tbody :height="total * rowHeight">
+    <tbody :height="total * rowHeight + rowHeight">
       <TableDataRow
         v-for="row in rows"
         :key="row.index"
@@ -36,6 +36,12 @@ defineProps({
 
 <style lang="scss" scoped>
 .table-data-container__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-color);
+  border-bottom: 1px solid gray;
+
   th {
     padding: 0;
     font-size: 14px;
