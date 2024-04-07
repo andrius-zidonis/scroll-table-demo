@@ -9,6 +9,19 @@ const isError = computed(
 
 const emit = defineEmits(["onUpload", "beforeUpload"]);
 
+function mapData(json) {
+  const res = {};
+  res.columns = json.columns.map((col, index) => ({
+    index,
+    label: col,
+  }));
+  res.rows = json.rows.map((row, index) => ({
+    index,
+    values: row,
+  }));
+  return res;
+}
+
 function readJSONFile(event) {
   if (!event.target.files[0]) {
     // reset data when no file selected
@@ -33,14 +46,9 @@ function readJSONFile(event) {
     }
 
     try {
-      columns = obj.columns.map((col, index) => ({
-        index,
-        label: col,
-      }));
-      rows = obj.rows.map((row, index) => ({
-        index,
-        values: row,
-      }));
+      const res = mapData(obj);
+      columns = res.columns;
+      rows = res.rows;
     } catch (err) {
       errorWrongFormat.value = true;
       return;
@@ -54,6 +62,18 @@ function readJSONFile(event) {
 
   reader.readAsText(event.target.files[0]);
 }
+
+async function readFromServer(file) {
+  const data = await fetch(file);
+  const json = await data.json();
+
+  const res = mapData(json);
+
+  emit("onUpload", {
+    columns: res.columns,
+    rows: res.rows,
+  });
+}
 </script>
 
 <template>
@@ -63,6 +83,11 @@ function readJSONFile(event) {
   >
     <p>Choose a file with JSON data</p>
     <input accept=".json" type="file" @change="readJSONFile" />
+  </div>
+
+  <div class="table-data-input__buttons">
+    <button @click="readFromServer('/huge_6MB.json')">Load 6MB</button>
+    <button @click="readFromServer('/huge_18MB.json')">Load 18MB</button>
   </div>
 
   <div class="table-data-input__error" v-if="isError">
@@ -85,12 +110,18 @@ function readJSONFile(event) {
       border-color: var(--error-color);
     }
   }
+
+&__buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
 }
 
-.table-data-input__error {
-  text-align: center;
+  &__error {
+    text-align: center;
   color: var(--error-color);
   padding-bottom: 16px;
+  }
 }
 
 input[type="file"] {
