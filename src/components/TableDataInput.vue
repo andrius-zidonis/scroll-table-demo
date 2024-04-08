@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import config from '../config.js';
 
 const errorFailedToParse = ref(false);
 const errorWrongFormat = ref(false);
@@ -106,8 +107,8 @@ async function handleUrlInput() {
   </div>
 
   <div class="table-data-input__buttons">
-    <button @click="readFromServer('/huge_6MB.json')">Load 6MB</button>
-    <button @click="readFromServer('/huge_18MB.json')">Load 18MB</button>
+    <button @click="readFromServer(config.base + 'huge_6MB.json')">Load 6MB</button>
+    <button @click="readFromServer(config.base + 'huge_18MB.json')">Load 18MB</button>
 
     <div class="table-data-input__url-field">
       <input v-model="url" type="text" placeholder="/huge_6MB.json" />
